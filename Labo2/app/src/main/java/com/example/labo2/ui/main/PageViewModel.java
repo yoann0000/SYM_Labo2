@@ -12,7 +12,14 @@ public class PageViewModel extends ViewModel {
     private LiveData<String> mText = Transformations.map(mIndex, new Function<Integer, String>() {
         @Override
         public String apply(Integer input) {
-            return "Hello world from section: " + input;
+            switch(input) {
+                case 1: return "Envoi / Réception";
+                case 2: return "Envoi / Minimum logs";
+                case 3: return "Envoi / Minimum logs";
+                case 4: return "Envoi / Réception";
+                case 5: return "Choix d'un auteur: / Postes de l'auteur";
+                default: return "null";
+            }
         }
     });
 
