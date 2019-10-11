@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Labo2</string>
+    <string name="tab_text_1">Asynchrone</string>
+    <string name="tab_text_2">Différée</string>
+    <string name="tab_text_3">Sérialisation</string>
+    <string name="tab_text_4">Compressée</string>
+    <string name="tab_text_5">GraphQL</string>
+</resources>
