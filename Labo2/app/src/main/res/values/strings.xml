@@ -1,10 +1,13 @@
 <resources>
     <string name="app_name">Labo2</string>
-    <string name="tab_text_1">Asynchrone</string>
-    <string name="tab_text_2">Différée</string>
-    <string name="tab_text_3">Sérialisation</string>
-    <string name="tab_text_4">Compressée</string>
-    <string name="tab_text_5">GraphQL</string>
-    <string name="texte_a_envoyer">Texte à envoyer</string>
-    <string name="reponse">Réponse du serveur</string>
+    <string name="asynchrone">Asynchrone</string>
+    <string name="differee">Différée</string>
+    <string name="objet">Objet</string>
+    <string name="graphqi">GraphQI</string>
+    <string name="exit">Quitter</string>
+    <string name="compressee">Compressee</string>
+    <string name="envoi">Envoi</string>
+    <string name="reception">Reception</string>
+    <string name="retour">Retour</string>
+    <string name="envoyer">Envoyer</string>
 </resources>

@@ -3,6 +3,7 @@
     package="com.example.labo2">
 
     <application
+        android:networkSecurityConfig="@xml/network_security_config"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -19,6 +20,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:label="@string/app_name" android:name=".ui.AsynchronCommunicationActivity"/>
+        <activity android:label="@string/app_name" android:name=".ui.CompressCommunicationActivity"/>
+        <activity android:label="@string/app_name" android:name=".ui.DifferCommunicationActivity"/>
+        <activity android:label="@string/app_name" android:name=".ui.GraphQLCommunicationActivity"/>
+        <activity android:label="@string/app_name" android:name=".ui.ObjectCommunicationActivity"/>
     </application>
 
 </manifest>
