@@ -11,10 +11,16 @@ import android.widget.TextView;
 import com.example.labo2.R;
 import com.example.labo2.ui.eventListener.CommunicationEventListener;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 
 /**
@@ -48,7 +54,7 @@ public class AsynchronCommunicationActivity extends Activity {
                         public boolean handleServerResponse(String response) {
                             // Code de traitement de la réponse – dans le UI-Thread
                             if(response != null){
-                                retour.setText(response);
+                                reponse.setText(response);
                                 return true;
                             }
                             return false;
@@ -73,29 +79,40 @@ public class AsynchronCommunicationActivity extends Activity {
         private CommunicationEventListener cel = null;
 
         @Override
-        protected String doInBackground(String... strings) throws Exception {
-            URL obj = new URL(strings[0]);
-            HttpURLConnection connection = (HttpURLConnection) obj.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Request", strings[1]);
+        protected String doInBackground(String... strings) {
+            URL obj = null;
+            try {
+                obj = new URL(strings[1]);
+                HttpURLConnection connection = (HttpURLConnection) obj.openConnection();
+                connection.setRequestMethod("POST");
+                System.out.println(strings[0]);
+                connection.setRequestProperty("Request", strings[0]);
+                connection.setDoOutput(true);
+                BufferedWriter os = new BufferedWriter(new OutputStreamWriter(
+                        connection.getOutputStream(), "UTF-8"));
+                os.append(strings[0]);
+                os.flush();
+                BufferedReader in = new BufferedReader(new InputStreamReader(
+                        connection.getInputStream()));
+                String inputLine;
+                StringBuffer response = new StringBuffer();
 
-            connection.setDoOutput(true);
-            OutputStream os = connection.getOutputStream();
-            os.flush();
-            os.close();
-
-            BufferedReader in = new BufferedReader(new InputStreamReader(
-                    connection.getInputStream()));
-            String inputLine;
-            StringBuffer response = new StringBuffer();
-
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+                os.close();
+                return response.toString();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (ProtocolException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            in.close();
 
             // print result
-            return response.toString();
+            return null;
         }
 
         @Override
