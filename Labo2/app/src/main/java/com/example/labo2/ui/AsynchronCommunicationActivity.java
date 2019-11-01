@@ -11,12 +11,10 @@ import android.widget.TextView;
 import com.example.labo2.R;
 import com.example.labo2.ui.eventListener.CommunicationEventListener;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -27,12 +25,7 @@ import java.net.URL;
  * Classe s'occupant de la partie asynchrone
  */
 public class AsynchronCommunicationActivity extends Activity {
-
-    private TextView envoiLabel = null;
-    private TextView reponseLabel = null;
     private EditText message = null;
-    private EditText reponse = null;
-    private Button envoiBouton = null;
     private Button retour = null;
     private SymComManager scm = new SymComManager();
 
@@ -41,11 +34,11 @@ public class AsynchronCommunicationActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_async);
 
-        this.envoiLabel = findViewById(R.id.envoi);
-        this.reponseLabel = findViewById(R.id.reception);
+        TextView envoiLabel = findViewById(R.id.envoi);
+        TextView reponseLabel = findViewById(R.id.reception);
         this.message = findViewById(R.id.send);
-        this.reponse = findViewById(R.id.received);
-        this.envoiBouton = findViewById(R.id.env);
+        EditText reponse = findViewById(R.id.received);
+        Button envoiBouton = findViewById(R.id.env);
         this.retour = findViewById(R.id.retour);
 
         envoiBouton.setOnClickListener((v) -> {
@@ -53,7 +46,7 @@ public class AsynchronCommunicationActivity extends Activity {
                     response -> {
                         // Code de traitement de la réponse – dans le UI-Thread
                         if(response != null){
-                            retour.setText(response);
+                            reponse.setText(response);
                             return true;
                         }
                         return false;
@@ -67,9 +60,7 @@ public class AsynchronCommunicationActivity extends Activity {
             message.setText("");
         });
 
-        retour.setOnClickListener((v) -> {
-            finish();
-        });
+        retour.setOnClickListener((v) -> finish());
     }
 
     private class SymComManager extends AsyncTask<String, Void, String> {
@@ -78,7 +69,7 @@ public class AsynchronCommunicationActivity extends Activity {
 
         @Override
         protected String doInBackground(String... strings) {
-            URL obj = null;
+            URL obj;
             try {
                 obj = new URL(strings[1]);
                 HttpURLConnection connection = (HttpURLConnection) obj.openConnection();
@@ -93,7 +84,7 @@ public class AsynchronCommunicationActivity extends Activity {
                 BufferedReader in = new BufferedReader(new InputStreamReader(
                         connection.getInputStream()));
                 String inputLine;
-                StringBuffer response = new StringBuffer();
+                StringBuilder response = new StringBuilder();
 
                 while ((inputLine = in.readLine()) != null) {
                     response.append(inputLine);
@@ -123,11 +114,11 @@ public class AsynchronCommunicationActivity extends Activity {
          * @param request Le texte mis
          * @param url L'URL du serveur à joindre
          */
-        public void sendRequest(String request, String url) {
+        void sendRequest(String request, String url) {
             this.execute(request, url);
         }
 
-        public void setCommunicationEventListener (CommunicationEventListener l){
+        void setCommunicationEventListener (CommunicationEventListener l){
             this.cel = l;
         }
     }
