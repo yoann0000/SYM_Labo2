@@ -44,15 +44,13 @@ public class AsynchronCommunicationActivity extends Activity {
 
         envoiBouton.setOnClickListener((v) -> {
             scm.setCommunicationEventListener(
-                    new CommunicationEventListener(){
-                        public boolean handleServerResponse(String response) {
-                            // Code de traitement de la réponse – dans le UI-Thread
-                            if(response != null){
-                                retour.setText(response);
-                                return true;
-                            }
-                            return false;
+                    response -> {
+                        // Code de traitement de la réponse – dans le UI-Thread
+                        if(response != null){
+                            retour.setText(response);
+                            return true;
                         }
+                        return false;
                     });
             try {
                 scm.sendRequest(message.getText().toString(), "http://sym.iict.ch/rest/txt");
@@ -73,29 +71,34 @@ public class AsynchronCommunicationActivity extends Activity {
         private CommunicationEventListener cel = null;
 
         @Override
-        protected String doInBackground(String... strings) throws Exception {
-            URL obj = new URL(strings[0]);
-            HttpURLConnection connection = (HttpURLConnection) obj.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Request", strings[1]);
+        protected String doInBackground(String... strings) {
+            try {
+                URL obj = new URL(strings[0]);
+                HttpURLConnection connection = (HttpURLConnection) obj.openConnection();
+                connection.setRequestMethod("POST");
+                connection.setRequestProperty("Request", strings[1]);
 
-            connection.setDoOutput(true);
-            OutputStream os = connection.getOutputStream();
-            os.flush();
-            os.close();
+                connection.setDoOutput(true);
+                OutputStream os = connection.getOutputStream();
+                os.flush();
+                os.close();
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(
-                    connection.getInputStream()));
-            String inputLine;
-            StringBuffer response = new StringBuffer();
+                BufferedReader in = new BufferedReader(new InputStreamReader(
+                        connection.getInputStream()));
+                String inputLine;
+                StringBuilder response = new StringBuilder();
 
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+
+                // print result
+                return response.toString();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            in.close();
-
-            // print result
-            return response.toString();
+            return null;
         }
 
         @Override
@@ -107,9 +110,8 @@ public class AsynchronCommunicationActivity extends Activity {
          * Permet d'envoyer un document request vers le serveur désigné par ur
          * @param request Le texte mis
          * @param url L'URL du serveur à joindre
-         * @throws Exception
          */
-        public void sendRequest(String request, String url) throws Exception {
+        public void sendRequest(String request, String url) {
             this.execute(request, url);
         }
 
