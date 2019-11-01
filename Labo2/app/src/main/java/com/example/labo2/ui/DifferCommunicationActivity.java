@@ -55,6 +55,19 @@ public class DifferCommunicationActivity extends Activity {
             message.setText("");
         });
 
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    while(true) {
+                        sleep(1000);
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        thread.start();
         retour.setOnClickListener((v) -> finish());
     }
 
