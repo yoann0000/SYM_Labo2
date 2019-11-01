@@ -24,9 +24,7 @@ import java.net.URL;
 /**
  * Classe s'occupant de la partie asynchrone
  */
-public class AsynchronCommunicationActivity extends Activity {
-    private EditText message = null;
-    private Button retour = null;
+public class AsynchronCommunicationActivity extends Activity {private EditText message = null;
     private SymComManager scm = new SymComManager();
 
     @Override
@@ -39,7 +37,7 @@ public class AsynchronCommunicationActivity extends Activity {
         this.message = findViewById(R.id.send);
         EditText reponse = findViewById(R.id.received);
         Button envoiBouton = findViewById(R.id.env);
-        this.retour = findViewById(R.id.retour);
+        Button retour = findViewById(R.id.retour);
 
         envoiBouton.setOnClickListener((v) -> {
             scm.setCommunicationEventListener(
@@ -123,3 +121,4 @@ public class AsynchronCommunicationActivity extends Activity {
         }
     }
 }
+

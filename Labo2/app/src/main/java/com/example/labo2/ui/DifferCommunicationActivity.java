@@ -11,19 +11,17 @@ import com.example.labo2.R;
 import com.example.labo2.ui.eventListener.CommunicationEventListener;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 
 public class DifferCommunicationActivity extends Activity {
-
-    private TextView envoiLabel = null;
-    private TextView reponseLabel = null;
     private EditText message = null;
-    private EditText reponse = null;
-    private Button envoiBouton = null;
-    private Button retour = null;
     private SymComManager scm = new SymComManager();
 
     @Override
@@ -31,19 +29,19 @@ public class DifferCommunicationActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_differ);
 
-        this.envoiLabel = findViewById(R.id.envoi);
-        this.reponseLabel = findViewById(R.id.reception);
+        TextView envoiLabel = findViewById(R.id.envoi);
+        TextView reponseLabel = findViewById(R.id.reception);
         this.message = findViewById(R.id.send);
-        this.reponse = findViewById(R.id.received);
-        this.envoiBouton = findViewById(R.id.env);
-        this.retour = findViewById(R.id.retour);
+        EditText reponse = findViewById(R.id.received);
+        Button envoiBouton = findViewById(R.id.env);
+        Button retour = findViewById(R.id.retour);
 
         envoiBouton.setOnClickListener((v) -> {
             scm.setCommunicationEventListener(
                     response -> {
                         // Code de traitement de la réponse – dans le UI-Thread
                         if(response != null){
-                            retour.setText(response);
+                            reponse.setText(response);
                             return true;
                         }
                         return false;
@@ -57,9 +55,7 @@ public class DifferCommunicationActivity extends Activity {
             message.setText("");
         });
 
-        retour.setOnClickListener((v) -> {
-            finish();
-        });
+        retour.setOnClickListener((v) -> finish());
     }
 
     private class SymComManager extends AsyncTask<String, Void, String> {
@@ -68,17 +64,18 @@ public class DifferCommunicationActivity extends Activity {
 
         @Override
         protected String doInBackground(String... strings) {
+            URL obj;
             try {
-                URL obj = new URL(strings[0]);
+                obj = new URL(strings[1]);
                 HttpURLConnection connection = (HttpURLConnection) obj.openConnection();
                 connection.setRequestMethod("POST");
-                connection.setRequestProperty("Request", strings[1]);
-
+                System.out.println(strings[0]);
+                connection.setRequestProperty("Request", strings[0]);
                 connection.setDoOutput(true);
-                OutputStream os = connection.getOutputStream();
+                BufferedWriter os = new BufferedWriter(new OutputStreamWriter(
+                        connection.getOutputStream(), "UTF-8"));
+                os.append(strings[0]);
                 os.flush();
-                os.close();
-
                 BufferedReader in = new BufferedReader(new InputStreamReader(
                         connection.getInputStream()));
                 String inputLine;
@@ -88,12 +85,17 @@ public class DifferCommunicationActivity extends Activity {
                     response.append(inputLine);
                 }
                 in.close();
-
-                // print result
+                os.close();
                 return response.toString();
-            } catch (Exception e) {
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (ProtocolException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
                 e.printStackTrace();
             }
+
+            // print result
             return null;
         }
 
@@ -107,13 +109,12 @@ public class DifferCommunicationActivity extends Activity {
          * @param request Le texte mis
          * @param url L'URL du serveur à joindre
          */
-        public void sendRequest(String request, String url) {
+        void sendRequest(String request, String url) {
             this.execute(request, url);
         }
 
-        public void setCommunicationEventListener (CommunicationEventListener l){
+        void setCommunicationEventListener (CommunicationEventListener l){
             this.cel = l;
         }
     }
 }
-
