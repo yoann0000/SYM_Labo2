@@ -46,7 +46,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/compr"
         android:ems="10"
-        android:text="@string/graphqi"
+        android:text="@string/graphql"
         android:layout_margin="30dp"/>
 
     <Button
