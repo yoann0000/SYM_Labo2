@@ -34,7 +34,6 @@ public class AsynchronCommunicationActivity extends Activity {
     private EditText reponse = null;
     private Button envoiBouton = null;
     private Button retour = null;
-    private SymComManager scm = new SymComManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,11 +48,12 @@ public class AsynchronCommunicationActivity extends Activity {
         this.retour = findViewById(R.id.retour);
 
         envoiBouton.setOnClickListener((v) -> {
+            SymComManager scm = new SymComManager();
             scm.setCommunicationEventListener(
                     response -> {
                         // Code de traitement de la réponse – dans le UI-Thread
                         if(response != null){
-                            retour.setText(response);
+                            this.reponse.setText(response);
                             return true;
                         }
                         return false;
@@ -72,7 +72,7 @@ public class AsynchronCommunicationActivity extends Activity {
         });
     }
 
-    private class SymComManager extends AsyncTask<String, Void, String> {
+    public class SymComManager extends AsyncTask<String, Void, String> {
 
         private CommunicationEventListener cel = null;
 
