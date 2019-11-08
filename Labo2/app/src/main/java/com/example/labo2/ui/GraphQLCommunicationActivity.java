@@ -3,6 +3,7 @@ package com.example.labo2.ui;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 
@@ -20,6 +21,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.ArrayList;
 
 public class GraphQLCommunicationActivity extends Activity {
 
@@ -35,8 +37,17 @@ public class GraphQLCommunicationActivity extends Activity {
                 response -> {
                     // Code de traitement de la réponse – dans le UI-Thread
                     if(response != null){
-                        SpinnerAdapter<String> adapter = new RecyclerView.Adapter<String>();
-                        selectList.setAdapter(adapter);
+                        ArrayList<String> arrayList = new ArrayList<>();
+                        //A changer
+                        arrayList.add("JAVA");
+                        arrayList.add("ANDROID");
+                        arrayList.add("C Language");
+                        arrayList.add("CPP Language");
+                        arrayList.add("Go Language");
+                        arrayList.add("AVN SYSTEMS");
+                        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this,                         android.R.layout.simple_spinner_item, arrayList);
+                        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        selectList.setAdapter(arrayAdapter);
                         return true;
                     }
                     return false;
