@@ -38,12 +38,12 @@ public class AsynchronCommunicationActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_async);
 
-        TextView envoiLabel = findViewById(R.id.envoi);
-        TextView reponseLabel = findViewById(R.id.reception);
+        this.envoiLabel = findViewById(R.id.envoi);
+        this.reponseLabel = findViewById(R.id.reception);
         this.message = findViewById(R.id.send);
-        EditText reponse = findViewById(R.id.received);
-        Button envoiBouton = findViewById(R.id.env);
-        Button retour = findViewById(R.id.retour);
+        this.reponse = findViewById(R.id.received);
+        this.envoiBouton = findViewById(R.id.env);
+        this.retour = findViewById(R.id.retour);
 
         envoiBouton.setOnClickListener((v) -> {
             SymComManager scm = new SymComManager();
@@ -51,7 +51,7 @@ public class AsynchronCommunicationActivity extends Activity {
                     response -> {
                         // Code de traitement de la réponse – dans le UI-Thread
                         if(response != null){
-                            this.reponse.setText(response);
+                            reponse.setText(response);
                             return true;
                         }
                         return false;
@@ -85,7 +85,7 @@ public class AsynchronCommunicationActivity extends Activity {
                 BufferedWriter os = new BufferedWriter(new OutputStreamWriter(
                         connection.getOutputStream(), "UTF-8"));
                 os.append(strings[0]);
-                os.flush();
+                os.close();
                 BufferedReader in = new BufferedReader(new InputStreamReader(
                         connection.getInputStream()));
                 String inputLine;

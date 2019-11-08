@@ -21,6 +21,7 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
+import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
 public class CompressCommunicationActivity extends Activity {
@@ -30,7 +31,6 @@ public class CompressCommunicationActivity extends Activity {
     private EditText reponse = null;
     private Button envoiBouton = null;
     private Button retour = null;
-    private SymComManagerCompress scm = new SymComManagerCompress();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,11 +44,12 @@ public class CompressCommunicationActivity extends Activity {
         this.retour = findViewById(R.id.retour);
 
         envoiBouton.setOnClickListener((v) -> {
+            SymComManagerCompress scm = new SymComManagerCompress();
             scm.setCommunicationEventListener(
                     response -> {
                         // Code de traitement de la réponse – dans le UI-Thread
                         if(response != null){
-                            retour.setText(response);
+                            reponse.setText(response);
                             return true;
                         }
                         return false;
@@ -78,20 +79,25 @@ public class CompressCommunicationActivity extends Activity {
                 obj = new URL(strings[1]);
                 HttpURLConnection connection = (HttpURLConnection) obj.openConnection();
                 connection.setRequestMethod("POST");
-                System.out.println(strings[0]);
-                connection.setRequestProperty("Request", strings[0]);
+                System.out.println("0 " +strings[0]);
+                System.out.println("1 " +strings[1]);
                 connection.setRequestProperty("X-Network", "CSD");
                 connection.setRequestProperty("X-Content-Encoding", "deflate");
+                connection.setRequestProperty("Content-Type", "text/plain");
                 connection.setDoOutput(true);
-                Deflater def = new Deflater();
+                Deflater def = new Deflater(Deflater.BEST_COMPRESSION, true);
                 BufferedWriter os = new BufferedWriter(new OutputStreamWriter(
                         new DeflaterOutputStream(
-                        connection.getOutputStream(), def, strings[0].length()), "UTF-8"));
+                        connection.getOutputStream(), def), "UTF-8"));
                 os.append(strings[0]);
-                os.flush();
+                os.close();
+                System.out.println(connection.getResponseCode());
+                System.out.println(connection.getErrorStream());
+                connection.getInputStream();
+                Inflater inf = new Inflater(true);
                 BufferedReader in = new BufferedReader(new InputStreamReader(
                         new InflaterInputStream(
-                        connection.getInputStream())));
+                        connection.getInputStream(), inf)));
                 String inputLine;
                 StringBuffer response = new StringBuffer();
 
