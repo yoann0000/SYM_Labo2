@@ -1,6 +1,9 @@
 package com.example.labo2.ui;
 
 import android.app.Activity;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.Button;
@@ -19,14 +22,9 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.util.Queue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 public class DifferCommunicationActivity extends Activity {
     private EditText message = null;
-    private SymComManager scm = new SymComManager();
-    private int cap =  128;
-    private Queue<String> messageBuffer = new LinkedBlockingQueue<>(cap);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +39,7 @@ public class DifferCommunicationActivity extends Activity {
         Button retour = findViewById(R.id.retour);
 
         envoiBouton.setOnClickListener((v) -> {
+            SymComManager scm = new SymComManager();
             scm.setCommunicationEventListener(
                     response -> {
                         // Code de traitement de la réponse – dans le UI-Thread
@@ -50,22 +49,13 @@ public class DifferCommunicationActivity extends Activity {
                         }
                         return false;
                     });
-            try {
-                while (!messageBuffer.isEmpty()) {
-                    String msg = messageBuffer.peek();
-                    scm.sendRequest(msg, "http://sym.iict.ch/rest/txt");
-                    messageBuffer.poll();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+
             try {
                 scm.sendRequest(message.getText().toString(), "http://sym.iict.ch/rest/txt");
             }
             catch (Exception e) {
                 System.out.println("Exception : " + e);
                 e.printStackTrace();
-                messageBuffer.add(message.getText().toString());
             }
             message.setText("");
         });
@@ -73,7 +63,7 @@ public class DifferCommunicationActivity extends Activity {
         retour.setOnClickListener((v) -> finish());
     }
 
-    private static class SymComManager extends AsyncTask<String, Void, String> {
+    private class SymComManager extends AsyncTask<String, Void, String> {
 
         private CommunicationEventListener cel = null;
 
@@ -81,6 +71,9 @@ public class DifferCommunicationActivity extends Activity {
         protected String doInBackground(String... strings) {
             URL obj;
             try {
+                while (!isNetworkAvailable()){
+                    Thread.sleep(5000);
+                }
                 obj = new URL(strings[1]);
                 HttpURLConnection connection = (HttpURLConnection) obj.openConnection();
                 connection.setRequestMethod("POST");
@@ -108,6 +101,8 @@ public class DifferCommunicationActivity extends Activity {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
 
             // print result
@@ -130,6 +125,13 @@ public class DifferCommunicationActivity extends Activity {
 
         void setCommunicationEventListener (CommunicationEventListener l){
             this.cel = l;
+        }
+
+        private boolean isNetworkAvailable() {
+            ConnectivityManager connectivityManager
+                    = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+            return activeNetworkInfo != null && activeNetworkInfo.isConnected();
         }
     }
 }
