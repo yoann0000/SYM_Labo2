@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
@@ -24,7 +25,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class DifferCommunicationActivity extends Activity {
     private EditText message = null;
-    private SymComManager scm = new SymComManager();
     private int cap =  128;
     private Queue<String> messageBuffer = new LinkedBlockingQueue<>(cap);
 
@@ -41,6 +41,7 @@ public class DifferCommunicationActivity extends Activity {
         Button retour = findViewById(R.id.retour);
 
         envoiBouton.setOnClickListener((v) -> {
+            SymComManager scm = new SymComManager();
             scm.setCommunicationEventListener(
                     response -> {
                         // Code de traitement de la réponse – dans le UI-Thread
@@ -60,12 +61,16 @@ public class DifferCommunicationActivity extends Activity {
                 e.printStackTrace();
             }
             try {
-                scm.sendRequest(message.getText().toString(), "http://sym.iict.ch/rest/txt");
+                if (InetAddress.getByName("http://sym.iict.ch/rest/txt").isReachable(10)) {
+                    scm.sendRequest(message.getText().toString(), "http://sym.iict.ch/rest/txt");
+                } else {
+                    messageBuffer.add(message.getText().toString());
+                }
+
             }
             catch (Exception e) {
                 System.out.println("Exception : " + e);
                 e.printStackTrace();
-                messageBuffer.add(message.getText().toString());
             }
             message.setText("");
         });
@@ -73,7 +78,7 @@ public class DifferCommunicationActivity extends Activity {
         retour.setOnClickListener((v) -> finish());
     }
 
-    private static class SymComManager extends AsyncTask<String, Void, String> {
+    private class SymComManager extends AsyncTask<String, Void, String> {
 
         private CommunicationEventListener cel = null;
 

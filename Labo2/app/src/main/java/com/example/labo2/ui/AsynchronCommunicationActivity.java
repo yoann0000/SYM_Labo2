@@ -51,7 +51,7 @@ public class AsynchronCommunicationActivity extends Activity {
                     response -> {
                         // Code de traitement de la réponse – dans le UI-Thread
                         if(response != null){
-                            this.reponse.setText(response);
+                            reponse.setText(response);
                             return true;
                         }
                         return false;
