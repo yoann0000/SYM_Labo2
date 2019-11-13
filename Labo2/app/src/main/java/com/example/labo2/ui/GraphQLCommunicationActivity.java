@@ -3,7 +3,9 @@ package com.example.labo2.ui;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 
 import com.example.labo2.R;
@@ -24,18 +26,21 @@ import java.util.List;
 public class GraphQLCommunicationActivity extends Activity {
 
     private Spinner spinner;
+    private Button button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_async);
         this.spinner = findViewById(R.id.spinner);
+        this.button = findViewById(R.id.button);
 
         SymComManager scm = new SymComManager();
         scm.setCommunicationEventListener(
                 response -> {
                     // Code de traitement de la réponse – dans le UI-Thread
-                    if(true){
+                    if(response != null){
+                        System.out.println(response);
                         List<String> arrayList = new ArrayList<>();
                         arrayList.add("JAVA");
                         arrayList.add("ANDROID");
@@ -57,25 +62,25 @@ public class GraphQLCommunicationActivity extends Activity {
             e.printStackTrace();
         }
 
-
-        spinner.setOnClickListener((v) -> { //{"query":"{allPostByAuthor(authorId: 1){title description}}"}
+        button.setOnClickListener(v -> { //{"query":"{allPostByAuthor(authorId: 1){title description}}"}
             SymComManager symComManager = new SymComManager();
             symComManager.setCommunicationEventListener(
                     response -> {
                         // Code de traitement de la réponse – dans le UI-Thread
                         if(response != null){
-                            //response.setText(response);
+
                             return true;
                         }
                         return false;
                     });
+            String author = String.valueOf(spinner.getSelectedItem());
+            String query = "allPostByAuthor(authorId: " + author + "){title description}";
             try {
-                //symComManager.sendRequest(message.getText().toString(), "http://sym.iict.ch/rest/txt");
+                symComManager.sendRequest(query, "http://sym.iict.ch/rest/txt");
             } catch (Exception e) {
                 System.out.println("Exception : " + e);
                 e.printStackTrace();
             }
-            //message.setText("");
         });
 
         //retour.setOnClickListener((v) -> finish());
