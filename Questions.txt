@@ -6,3 +6,12 @@ Par exemple, on s'authentifie ce qui nous donnerai un token d'access puis toute 
 Idem pour différé pour autant que le token ne s'expire pas.
 
 4.3
+un probleme de concurrence.
+
+4.4
+
+4.5.a
+REST/JSON est moins secure v donc serai vulnerable a des attaques si le code derrière n'est pas secure
+
+4.5.b
+les protocol buffers sont compatibles avec HTTP. le protocol buffer pourrait serialiser un objet en une requete http pour l'envoyer.
