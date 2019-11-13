@@ -5,9 +5,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
-
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.labo2.R;
 import com.example.labo2.ui.eventListener.CommunicationEventListener;
@@ -22,67 +19,66 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 public class GraphQLCommunicationActivity extends Activity {
 
-    private Spinner selectList;
+    private Spinner spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_async);
-        this.selectList = findViewById(R.id.spinner);
+        this.spinner = findViewById(R.id.spinner);
 
         SymComManager scm = new SymComManager();
         scm.setCommunicationEventListener(
                 response -> {
                     // Code de traitement de la réponse – dans le UI-Thread
-                    if(response != null){
-                        //A changer
+                    if(true){
+                        List<String> arrayList = new ArrayList<>();
                         arrayList.add("JAVA");
                         arrayList.add("ANDROID");
                         arrayList.add("C Language");
                         arrayList.add("CPP Language");
                         arrayList.add("Go Language");
                         arrayList.add("AVN SYSTEMS");
-                        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this,                         android.R.layout.simple_spinner_item, arrayList);
+                        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, arrayList);
                         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                        selectList.setAdapter(arrayAdapter);
-                        ArrayList<String> arrayList = new ArrayList<>();
+                        spinner.setAdapter(arrayAdapter);
                         return true;
                     }
                     return false;
                 });
         try {
-            scm.sendRequest("{allAuthors{id first_name last_name}}",
-                    "http://sym.iict.ch/api/graphql");
+            scm.sendRequest("{allAuthors{id first_name last_name}}", "http://sym.iict.ch/api/graphql");
         } catch (Exception e) {
             System.out.println("Exception : " + e);
             e.printStackTrace();
         }
 
 
-        selectList.setOnClickListener((v) -> { //{"query":"{allPostByAuthor(authorId: 1){title description}}"}
+        spinner.setOnClickListener((v) -> { //{"query":"{allPostByAuthor(authorId: 1){title description}}"}
             SymComManager symComManager = new SymComManager();
             symComManager.setCommunicationEventListener(
                     response -> {
                         // Code de traitement de la réponse – dans le UI-Thread
                         if(response != null){
-                            response.setText(response);
+                            //response.setText(response);
                             return true;
                         }
                         return false;
                     });
             try {
-                symComManager.sendRequest(message.getText().toString(), "http://sym.iict.ch/rest/txt");
+                //symComManager.sendRequest(message.getText().toString(), "http://sym.iict.ch/rest/txt");
             } catch (Exception e) {
                 System.out.println("Exception : " + e);
                 e.printStackTrace();
             }
-            message.setText("");
+            //message.setText("");
         });
 
-        retour.setOnClickListener((v) -> finish());
+        //retour.setOnClickListener((v) -> finish());
     }
 
     public class SymComManager extends AsyncTask<String, Void, String> {
