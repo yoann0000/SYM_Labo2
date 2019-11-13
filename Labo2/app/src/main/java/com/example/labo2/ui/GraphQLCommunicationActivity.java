@@ -22,7 +22,6 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
 public class GraphQLCommunicationActivity extends Activity {
 
@@ -39,11 +38,17 @@ public class GraphQLCommunicationActivity extends Activity {
                 response -> {
                     // Code de traitement de la réponse – dans le UI-Thread
                     if(response != null){
-                        List<String> testlist = new ArrayList<>();
-                        testlist.add("1");
-                        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, testlist);
-                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                        selectList.setAdapter(adapter);
+                        //A changer
+                        arrayList.add("JAVA");
+                        arrayList.add("ANDROID");
+                        arrayList.add("C Language");
+                        arrayList.add("CPP Language");
+                        arrayList.add("Go Language");
+                        arrayList.add("AVN SYSTEMS");
+                        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this,                         android.R.layout.simple_spinner_item, arrayList);
+                        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        selectList.setAdapter(arrayAdapter);
+                        ArrayList<String> arrayList = new ArrayList<>();
                         return true;
                     }
                     return false;
