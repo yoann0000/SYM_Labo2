@@ -1,0 +1,8 @@
+4.1
+
+4.2
+On peut utiliser un protocole asyncrone sous condition que l'authentification se fasse en synchrone.
+Par exemple, on s'authentifie ce qui nous donnerai un token d'access puis toute les autres requetes ce feraient à l'aide de ce token.
+Idem pour différé pour autant que le token ne s'expire pas.
+
+4.3

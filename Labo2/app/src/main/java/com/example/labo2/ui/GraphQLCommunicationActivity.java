@@ -3,6 +3,7 @@ package com.example.labo2.ui;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 
@@ -20,22 +21,28 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GraphQLCommunicationActivity extends Activity {
 
-    Spinner selectList = null;
+    private Spinner selectList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_async);
         this.selectList = findViewById(R.id.spinner);
+
         SymComManager scm = new SymComManager();
         scm.setCommunicationEventListener(
                 response -> {
                     // Code de traitement de la réponse – dans le UI-Thread
                     if(response != null){
-                        SpinnerAdapter<String> adapter = new RecyclerView.Adapter<String>();
+                        List<String> testlist = new ArrayList<>();
+                        testlist.add("1");
+                        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, testlist);
+                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         selectList.setAdapter(adapter);
                         return true;
                     }
@@ -50,19 +57,19 @@ public class GraphQLCommunicationActivity extends Activity {
         }
 
 
-        spinner.setOnClickListener((v) -> { //{"query":"{allPostByAuthor(authorId: 1){title description}}"}
-            SymComManager scm = new SymComManager();
-            scm.setCommunicationEventListener(
+        selectList.setOnClickListener((v) -> { //{"query":"{allPostByAuthor(authorId: 1){title description}}"}
+            SymComManager symComManager = new SymComManager();
+            symComManager.setCommunicationEventListener(
                     response -> {
                         // Code de traitement de la réponse – dans le UI-Thread
                         if(response != null){
-                            reponse.setText(response);
+                            response.setText(response);
                             return true;
                         }
                         return false;
                     });
             try {
-                scm.sendRequest(message.getText().toString(), "http://sym.iict.ch/rest/txt");
+                symComManager.sendRequest(message.getText().toString(), "http://sym.iict.ch/rest/txt");
             } catch (Exception e) {
                 System.out.println("Exception : " + e);
                 e.printStackTrace();
