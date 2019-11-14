@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -38,7 +39,7 @@ public class GraphQLCommunicationActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_async);
+        setContentView(R.layout.activity_graphql);
         this.spinner = findViewById(R.id.spinner);
         this.button = findViewById(R.id.button);
         this.returne = findViewById(R.id.button2);
@@ -49,7 +50,7 @@ public class GraphQLCommunicationActivity extends Activity {
                 response -> {
                     // Code de traitement de la réponse – dans le UI-Thread
                     if(response != null){
-                        System.out.println(response);
+                        System.out.println(response + " <------------------------");
                         List<String> arrayList = new ArrayList<>();
                         arrayList.add("JAVA");
                         arrayList.add("ANDROID");
@@ -65,13 +66,25 @@ public class GraphQLCommunicationActivity extends Activity {
                     return false;
                 });
         try {
-            scm.sendRequest("{allAuthors{id first_name last_name}}", "http://sym.iict.ch/api/graphql");
+            scm.sendRequest("{\"query\":\"{allAuthors{id first_name last_name}}\"}", "http://sym.iict.ch/api/graphql");
         } catch (Exception e) {
             System.out.println("Exception : " + e);
             e.printStackTrace();
         }
 
-        button.setOnClickListener(v -> { //{"query":"{allPostByAuthor(authorId: 1){title description}}"}
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                // your code here
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // your code here
+            }
+
+        });
+        /*button.setOnClickListener(v -> { //{"query":"{allPostByAuthor(authorId: 1){title description}}"}
 
             SymComManager symComManager = new SymComManager();
             symComManager.setCommunicationEventListener(
@@ -91,7 +104,7 @@ public class GraphQLCommunicationActivity extends Activity {
                 System.out.println("Exception : " + e);
                 e.printStackTrace();
             }
-        });
+        });*/
 
         returne.setOnClickListener((v) -> finish());
     }
@@ -104,6 +117,7 @@ public class GraphQLCommunicationActivity extends Activity {
         protected String doInBackground(String... strings) {
             URL obj;
             try {
+                System.out.println(strings[0]);
                 obj = new URL(strings[1]);
                 HttpURLConnection connection = (HttpURLConnection) obj.openConnection();
                 connection.setRequestMethod("POST");
