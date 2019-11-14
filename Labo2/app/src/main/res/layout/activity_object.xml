@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/envoi"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/envoi" />
+
+    <EditText
+        android:id="@+id/name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/envoi"
+        android:ems="10"
+        android:hint="e.x. : John Doe"
+        android:inputType="textMultiLine" />
+
+    <EditText
+        android:id="@+id/phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/name"
+        android:ems="10"
+        android:hint="e.x. : +41786554719"
+        android:inputType="textMultiLine" />
+
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/phone"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/jsonBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="JSON" />
+
+        <RadioButton
+            android:id="@+id/xmlBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="XML" />
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/reception"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/name"
+        android:ems="10"
+        android:hint="@string/reception"
+        tools:layout_below="@id/radioGroup" />
+
+    <EditText
+        android:id="@+id/received"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_below="@+id/reception"
+        android:ems="10" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/retour"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="false"
+            android:layout_weight="0.5"
+            android:text="@string/retour"
+            android:ems="10"/>
+
+        <Button
+            android:id="@+id/env"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="false"
+            android:layout_weight="0.5"
+            android:text="@string/envoyer"
+            android:ems="10"/>
+    </LinearLayout>
+</RelativeLayout>
