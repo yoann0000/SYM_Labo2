@@ -97,7 +97,7 @@ public class GraphQLCommunicationActivity extends Activity {
         }
 
         public String toString(){
-            return "Titel : "  + title + "\nDescription : " + description + "\n\n\n";
+            return "Titel : "  + title + "\n\nDescription : " + description + "\n\n\n";
         }
     }
 
@@ -116,7 +116,6 @@ public class GraphQLCommunicationActivity extends Activity {
                     // Code de traitement de la réponse – dans le UI-Thread
                     if(response != null){
                         parseAuthor(response);
-                        System.out.println(response + " <------------------------");
                         List<String> arrayList = new ArrayList<>();
                         for (Author a : data) {
                             arrayList.add(a.toString());
@@ -145,9 +144,9 @@ public class GraphQLCommunicationActivity extends Activity {
                             // Code de traitement de la réponse – dans le UI-Thread
                             if(response != null){
                                 LinkedList<Book> books = parseBook(response);
-                                String text = "";
+                                StringBuilder text = new StringBuilder();
                                 for(Book book : books){
-                                    text += book;
+                                    text.append(book);
                                 }
                                 textView.setText(text);
                                 return true;
