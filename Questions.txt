@@ -1,4 +1,4 @@
-4.1
+﻿4.1
 Si le Serveur ne répond pas, le SymComManager resterait bloqué lorsqu'il essaie de recevoir la réponse. Cela pourrait être un problème si celle-ci n'arrive 
 jamais (perte de message). Pour régler ce problème, il faudrait plutôt ouvrir un nouveau thread pour le SymComManager et rajouter un nouveau thread timeout,
 qui attend x seconde, regarde si le SymComManager est arrété et si ce n'est pas le cas, l'arrête et affiche une erreur "serveur indisponible"
@@ -24,15 +24,16 @@ l'envoi (qu'une ancienne préparation se fasse écraser par une nouvelle avant q
 fasse écraser par une nouvelle avant qu'elle ne soit traitée)
 
 4.4
-Effectuer une connexion par transmission différée 
- 
-Multiplexer toutes les connexions vers un même serveur en une seule connexion de transport. Dans ce dernier cas, comment implémenter
- le protocole applicatif, quels avantages peut-on espérer de ce multiplexage, et surtout, comment doit-on planifier les réponses du 
-serveur lorsque ces dernières s'avèrent nécessaires ? 
-Une seule connexion 
+Effectuer une connexion par transmission différée
+
+En effectuant la connexion en différée et pas les messages on limite le nombre de threads en attente active (si l'on assume que le thread de connexion se charge de reveiller les threads de message) et fait en sorte qu'il n'y a que besoin d'une boucle qui ping la connexion à la fois.
+
+Multiplexer les connexions
+
+En multiplexant les connexion on reduit le nombre de connexions ouvertes à une. Par contre il faut implémenter le multiplexeur capable de rediriger les messages la ou ils doivent l'être.
 
 4.5.a
-REST/JSON est moins secure v donc serai vulnerable a des attaques si le code derrière n'est pas secure
+REST/JSON est moins secure et donc serai vulnerable a des attaques si le code derrière n'est pas secure
 
 4.5.b
 les protocol buffers sont compatibles avec HTTP. le protocol buffer pourrait serialiser un objet en une requete http pour l'envoyer.
