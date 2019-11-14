@@ -35,7 +35,7 @@ import java.net.URL;
 
 public class ObjectCommunicationActivity extends Activity {
 
-    private class Person {
+    public class Person {
         private String name;
         private String phone;
 
