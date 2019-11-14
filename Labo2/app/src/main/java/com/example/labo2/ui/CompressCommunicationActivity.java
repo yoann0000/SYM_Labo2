@@ -94,29 +94,26 @@ public class CompressCommunicationActivity extends Activity {
                 System.out.println(connection.getResponseCode());
                 System.out.println(connection.getErrorStream());
                 connection.getInputStream();
-                Inflater inf = new Inflater(true);
-                BufferedReader in = new BufferedReader(new InputStreamReader(
-                        new InflaterInputStream(
-                        connection.getInputStream(), inf)));
-                String inputLine;
-                StringBuffer response = new StringBuffer();
 
-                while ((inputLine = in.readLine()) != null) {
-                    response.append(inputLine);
+                if(connection.getResponseCode() > 199 && connection.getResponseCode() < 300){
+                    Inflater inf = new Inflater(true);
+                    BufferedReader in = new BufferedReader(new InputStreamReader(
+                            new InflaterInputStream(
+                                    connection.getInputStream(), inf)));
+                    String inputLine;
+                    StringBuilder response = new StringBuilder();
+                    while ((inputLine = in.readLine()) != null) {
+                        response.append(inputLine);
+                    }
+                    in.close();
+                    return response.toString();
+                }else{
+                    return "Erreur " + connection.getResponseCode();
                 }
-                in.close();
-                os.close();
-                return response.toString();
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (ProtocolException e) {
-                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
+                return e.getMessage();
             }
-
-            // print result
-            return null;
         }
 
         @Override

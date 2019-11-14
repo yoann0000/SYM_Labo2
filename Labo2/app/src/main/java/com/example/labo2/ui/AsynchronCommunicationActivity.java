@@ -57,7 +57,7 @@ public class AsynchronCommunicationActivity extends Activity {
                         return false;
                     });
             try {
-                scm.sendRequest(message.getText().toString(), "http://sym.iict.ch/rest/txt");
+                scm.sendRequest(message.getText().toString(), "http://sym.iict.ch/rest/text");
             } catch (Exception e) {
                 System.out.println("Exception : " + e);
                 e.printStackTrace();
@@ -86,27 +86,23 @@ public class AsynchronCommunicationActivity extends Activity {
                         connection.getOutputStream(), "UTF-8"));
                 os.append(strings[0]);
                 os.close();
-                BufferedReader in = new BufferedReader(new InputStreamReader(
-                        connection.getInputStream()));
-                String inputLine;
-                StringBuilder response = new StringBuilder();
-
-                while ((inputLine = in.readLine()) != null) {
-                    response.append(inputLine);
+                if(connection.getResponseCode() > 199 && connection.getResponseCode() < 300){
+                    BufferedReader in = new BufferedReader(new InputStreamReader(
+                            connection.getInputStream()));
+                    String inputLine;
+                    StringBuilder response = new StringBuilder();
+                    while ((inputLine = in.readLine()) != null) {
+                        response.append(inputLine);
+                    }
+                    in.close();
+                    return response.toString();
+                }else{
+                    return "Erreur " + connection.getResponseCode();
                 }
-                in.close();
-                os.close();
-                return response.toString();
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (ProtocolException e) {
-                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
+                return e.getMessage();
             }
-
-            // print result
-            return null;
         }
 
         @Override
