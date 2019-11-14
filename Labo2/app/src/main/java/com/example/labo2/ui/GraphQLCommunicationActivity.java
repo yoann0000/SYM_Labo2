@@ -12,17 +12,20 @@ import android.widget.TextView;
 
 import com.example.labo2.R;
 import com.example.labo2.ui.eventListener.CommunicationEventListener;
+import com.google.gson.Gson;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class GraphQLCommunicationActivity extends Activity {
@@ -31,9 +34,31 @@ public class GraphQLCommunicationActivity extends Activity {
     private Button button;
     private Button returne;
     private TextView textView;
+    private Gson gson;
+    private LinkedList<Author> data;
 
-    public String parseResp(String response) {
-        return response;
+    public void parseResp(String response) {
+
+    }
+
+    class Author{
+        private int id;
+        private String first_name;
+        private String last_name;
+
+        public Author(int id, String first_name, String last_name){
+            this.id = id;
+            this.first_name = first_name;
+            this.last_name = last_name;
+        }
+
+        public String toString(){
+            return last_name + " " + first_name;
+        }
+
+        public int getId(){
+            return id;
+        }
     }
 
     @Override
@@ -44,6 +69,7 @@ public class GraphQLCommunicationActivity extends Activity {
         this.button = findViewById(R.id.button);
         this.returne = findViewById(R.id.button2);
         this.textView = findViewById(R.id.textView2);
+        this.data = new LinkedList<>();
 
         SymComManager scm = new SymComManager();
         scm.setCommunicationEventListener(
