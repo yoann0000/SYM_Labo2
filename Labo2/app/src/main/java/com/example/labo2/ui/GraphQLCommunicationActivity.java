@@ -11,16 +11,17 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.labo2.R;
-import com.example.labo2.model.Author;
 import com.example.labo2.ui.eventListener.CommunicationEventListener;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -34,11 +35,21 @@ public class GraphQLCommunicationActivity extends Activity {
     private Spinner spinner;
     private Button button;
     private TextView textView;
-    private Gson gson;
     private LinkedList<Author> data;
 
     public void parseResp(String response) {
-
+        JsonObject convertedObject = new Gson().fromJson(response, JsonObject.class);
+        JsonArray authors = convertedObject.get("data").getAsJsonObject().get("allAuthors").getAsJsonArray();
+        int id;
+        String firstName;
+        String lastName;
+        for (JsonElement author : authors) {
+            JsonObject authr = author.getAsJsonObject();
+            id = authr.get("id").getAsInt();
+            firstName = authr.get("first_name").getAsString();
+            lastName = authr.get("last_name").getAsString();
+            data.add(new Author(id, firstName, lastName));
+        }
     }
 
     class Author{
@@ -75,14 +86,12 @@ public class GraphQLCommunicationActivity extends Activity {
                 response -> {
                     // Code de traitement de la réponse – dans le UI-Thread
                     if(response != null){
+                        parseResp(response);
                         System.out.println(response + " <------------------------");
                         List<String> arrayList = new ArrayList<>();
-                        arrayList.add("JAVA");
-                        arrayList.add("ANDROID");
-                        arrayList.add("C Language");
-                        arrayList.add("CPP Language");
-                        arrayList.add("Go Language");
-                        arrayList.add("AVN SYSTEMS");
+                        for (Author a : data) {
+                            arrayList.add(a.toString());
+                        }
                         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, arrayList);
                         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         spinner.setAdapter(arrayAdapter);
