@@ -100,9 +100,14 @@ public class ObjectCommunicationActivity extends Activity {
                         Gson gson = new Gson();
                         scm.sendRequest(gson.toJson(person), "http://sym.iict.ch/rest/txt", "application/json");
                         break;
+
                     case R.id.xmlBtn:
                         String xmlRequest = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE directory SYSTEM \"http://sym.iict.ch/directory.dtd\"><directory/>";
                         scm.sendRequest(xmlRequest, "http://sym.iict.ch/rest/xml", "application/xml");
+                        break;
+                        
+                    default:
+                        this.response.setText("Please check JSON or XML button.");
                         break;
                 }
             } catch (Exception e) {
