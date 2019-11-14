@@ -250,6 +250,7 @@ public class ObjectCommunicationActivity extends Activity {
          * Permet d'envoyer un document request vers le serveur désigné par url
          * @param request Le texte mis
          * @param url L'URL du serveur à joindre
+         * @param contentType le type de contenu à savoir json ou xml
          */
         void sendRequest(String request, String url, String contentType) {
             this.execute(request, url, contentType);
