@@ -3,6 +3,7 @@ package com.example.labo2.ui;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Xml;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -12,36 +13,26 @@ import android.widget.TextView;
 import com.example.labo2.R;
 import com.example.labo2.ui.eventListener.CommunicationEventListener;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
+import org.xmlpull.v1.XmlSerializer;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 
-/*
-// Serialize
-JSONObject json = new JSONObject();
-json.put("key", "value");
-// ...
-// "serialize"
-Bundle bundle = new Bundle();
-bundle.putString("json", json.toString());
-
-// Deserialize
-Bundle bundle = getBundleFromIntentOrWhaterver();
-JSONObject json = null;
-try {
-    json = new JSONObject(bundle.getString("json"));
-    String key = json.getString("key");
-} catch (JSONException e) {
-    e.printStackTrace();
-}
- */
 public class ObjectCommunicationActivity extends Activity {
 
     private class Person {
@@ -51,6 +42,15 @@ public class ObjectCommunicationActivity extends Activity {
         Person(String name, String phone) {
             this.name = name;
             this.phone = phone;
+        }
+
+        Person(Person p) {
+            this.name = p.name;
+            this.phone = p.phone;
+        }
+
+        public String toString() {
+            return this.name + " " + this.phone;
         }
     }
 
@@ -86,12 +86,26 @@ public class ObjectCommunicationActivity extends Activity {
             SymComManager scm = new SymComManager();
             scm.setCommunicationEventListener(
                     response -> {
-                        if(response != null){
+                        if(response != null) {
                             this.name.setText("");
                             this.phone.setText("");
-                            this.response.setText(response);
+                            Person person;
+
+                            switch(radioGroup.getCheckedRadioButtonId()) {
+                                case R.id.jsonBtn:
+                                    Type type = new TypeToken<Person>(){}.getType();
+                                    person = new Gson().fromJson(response, type);
+                                    this.response.setText(person.toString());
+                                    break;
+
+                                case R.id.xmlBtn:
+                                    person = new Person(parseXml(response));
+                                    this.response.setText(person.toString());
+                                    break;
+                            }
+
                             long end =  System.currentTimeMillis();
-                            System.out.println("Temps " + (end - start));
+                            System.out.println("Temps : " + (end - start));
                             return true;
                         }
                         return false;
@@ -100,15 +114,14 @@ public class ObjectCommunicationActivity extends Activity {
                 switch(radioGroup.getCheckedRadioButtonId()) {
                     case R.id.jsonBtn:
                         Person person = new Person(this.name.getText().toString(), this.phone.getText().toString());
-                        Gson gson = new Gson();
-                        scm.sendRequest(gson.toJson(person), "http://sym.iict.ch/rest/json", "application/json");
+                        scm.sendRequest(new Gson().toJson(person), "http://sym.iict.ch/rest/txt", "application/json");
                         break;
 
                     case R.id.xmlBtn:
-                        String xmlRequest = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE directory SYSTEM \"http://sym.iict.ch/directory.dtd\"><directory/>";
+                        String xmlRequest = getXmlRequest(this.name.getText().toString(), this.phone.getText().toString());
                         scm.sendRequest(xmlRequest, "http://sym.iict.ch/rest/xml", "application/xml");
                         break;
-                        
+
                     default:
                         this.response.setText("Please check JSON or XML button.");
                         break;
@@ -122,6 +135,71 @@ public class ObjectCommunicationActivity extends Activity {
         back.setOnClickListener((v) -> finish());
     }
 
+    public String getXmlRequest(String name, String phone) {
+        XmlSerializer xmlData = Xml.newSerializer();
+        StringWriter xml = new StringWriter();
+        try {
+            xmlData.setOutput(xml);
+            xmlData.startDocument("UTF-8", null);
+            xmlData.docdecl(" directory SYSTEM \"http://sym.iict.ch/directory.dtd\"");
+            xmlData.startTag("","directory");
+            xmlData.startTag("", "person");
+
+            // Name
+            xmlData.startTag("", "name");
+            xmlData.text(name);
+            xmlData.endTag("", "name");
+
+            // Phone
+            xmlData.startTag("", "phone");
+            xmlData.text(phone);
+            xmlData.endTag("", "phone");
+
+            xmlData.endTag("", "person");
+            xmlData.endTag("", "directory");
+            xmlData.endDocument();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return xml.toString();
+    }
+
+    public Person parseXml(String xml) {
+        String name = null;
+        String phone = null;
+        XmlPullParserFactory xppf;
+        try {
+            xppf = XmlPullParserFactory.newInstance();
+            XmlPullParser xpp = xppf.newPullParser();
+            xpp.setInput(new StringReader(xml));
+
+            int event = xpp.getEventType();
+            while (event != XmlPullParser.END_DOCUMENT)  {
+                String tag = xpp.getName();
+                if (event == XmlPullParser.START_TAG) {
+                    if (tag.equals("name")) {
+                        if (xpp.next() == XmlPullParser.TEXT) {
+                            name = xpp.getText();
+                        }
+                    } else if (tag.equals("phone")) {
+                        if (xpp.next() == XmlPullParser.TEXT) {
+                            phone = xpp.getText();
+                        }
+                    }
+                }
+                event = xpp.next();
+            }
+        } catch (XmlPullParserException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return new Person(name, phone);
+    }
+
     public class SymComManager extends AsyncTask<String, Void, String> {
 
         private CommunicationEventListener cel = null;
@@ -130,7 +208,8 @@ public class ObjectCommunicationActivity extends Activity {
         protected String doInBackground(String ... strings) {
             URL obj;
             try {
-                System.out.println(strings[0]);
+                System.out.println(strings[0] + " " + strings[1] + " " + strings[2]);
+
                 obj = new URL(strings[1]);
                 HttpURLConnection connection = (HttpURLConnection) obj.openConnection();
                 connection.setRequestMethod("POST");
@@ -151,6 +230,7 @@ public class ObjectCommunicationActivity extends Activity {
                     response.append(inputLine);
                 }
                 in.close();
+                System.out.println(response.toString());
                 return response.toString();
             } catch (MalformedURLException e) {
                 e.printStackTrace();
