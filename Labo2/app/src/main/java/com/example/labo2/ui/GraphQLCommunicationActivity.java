@@ -124,6 +124,25 @@ public class GraphQLCommunicationActivity extends Activity {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 // your code here
+                SymComManager symComManager = new SymComManager();
+                symComManager.setCommunicationEventListener(
+                        response -> {
+                            // Code de traitement de la réponse – dans le UI-Thread
+                            if(response != null){
+                                System.out.println("I am here" + response);
+                                return true;
+                            }
+                            return false;
+                        });
+                int authorId =  data.get(position).getId();
+                String query = "{\"query\":\"{allPostByAuthor(authorId: " + authorId +
+                        "){title description}}\"}";
+                try {
+                    symComManager.sendRequest(query, "http://sym.iict.ch/api/graphql");
+                } catch (Exception e) {
+                    System.out.println("Exception : " + e);
+                    e.printStackTrace();
+                }
             }
 
             @Override
