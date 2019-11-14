@@ -73,7 +73,7 @@ public class GraphQLCommunicationActivity extends Activity {
         private String first_name;
         private String last_name;
 
-        public Author(int id, String first_name, String last_name){
+        Author(int id, String first_name, String last_name){
             this.id = id;
             this.first_name = first_name;
             this.last_name = last_name;
@@ -92,7 +92,7 @@ public class GraphQLCommunicationActivity extends Activity {
         private String title;
         private String description;
 
-        public Book(String title, String description){
+        Book(String title, String description){
             this.title = title;
             this.description = description;
         }
