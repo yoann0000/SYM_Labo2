@@ -94,7 +94,9 @@ public class ObjectCommunicationActivity extends Activity {
                             switch(radioGroup.getCheckedRadioButtonId()) {
                                 case R.id.jsonBtn:
                                     Type type = new TypeToken<Person>(){}.getType();
-                                    person = new Gson().fromJson(response, type);
+                                    int stop = response.indexOf("PHP");
+                                    String pers = response.substring(0, stop);
+                                    person = new Gson().fromJson(pers, type);
                                     this.response.setText(person.toString());
                                     break;
 
