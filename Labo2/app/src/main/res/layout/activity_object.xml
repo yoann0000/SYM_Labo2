@@ -17,7 +17,7 @@
         android:layout_below="@+id/envoi"
         android:ems="10"
         android:hint="e.x. : John Doe"
-        android:inputType="textMultiLine" />
+        android:inputType="textPersonName" />
 
     <EditText
         android:id="@+id/phone"
@@ -26,14 +26,15 @@
         android:layout_below="@id/name"
         android:ems="10"
         android:hint="e.x. : +41786554719"
-        android:inputType="textMultiLine" />
+        android:inputType="phone" />
 
     <RadioGroup
         android:id="@+id/radioGroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/phone"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="visible">
 
         <RadioButton
             android:id="@+id/jsonBtn"
@@ -46,6 +47,7 @@
             android:id="@+id/xmlBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:checked="false"
             android:text="XML" />
     </RadioGroup>
 
