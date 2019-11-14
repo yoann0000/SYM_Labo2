@@ -46,18 +46,21 @@ public class AsynchronCommunicationActivity extends Activity {
         this.retour = findViewById(R.id.retour);
 
         envoiBouton.setOnClickListener((v) -> {
+            long start =  System.currentTimeMillis();
             SymComManager scm = new SymComManager();
             scm.setCommunicationEventListener(
                     response -> {
                         // Code de traitement de la réponse – dans le UI-Thread
                         if(response != null){
                             reponse.setText(response);
+                            long end =  System.currentTimeMillis();
+                            System.out.println("Temps " + (end - start));
                             return true;
                         }
                         return false;
                     });
             try {
-                scm.sendRequest(message.getText().toString(), "http://sym.iict.ch/rest/text");
+                scm.sendRequest(message.getText().toString(), "http://sym.iict.ch/rest/txt");
             } catch (Exception e) {
                 System.out.println("Exception : " + e);
                 e.printStackTrace();
@@ -74,12 +77,11 @@ public class AsynchronCommunicationActivity extends Activity {
 
         @Override
         protected String doInBackground(String... strings) {
-            URL obj;
+            URL obj = null;
             try {
                 obj = new URL(strings[1]);
                 HttpURLConnection connection = (HttpURLConnection) obj.openConnection();
                 connection.setRequestMethod("POST");
-                System.out.println(strings[0]);
                 connection.setRequestProperty("Request", strings[0]);
                 connection.setDoOutput(true);
                 BufferedWriter os = new BufferedWriter(new OutputStreamWriter(

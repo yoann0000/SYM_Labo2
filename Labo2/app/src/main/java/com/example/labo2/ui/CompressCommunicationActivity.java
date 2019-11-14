@@ -44,12 +44,15 @@ public class CompressCommunicationActivity extends Activity {
         this.retour = findViewById(R.id.retour);
 
         envoiBouton.setOnClickListener((v) -> {
+            long start =  System.currentTimeMillis();
             SymComManagerCompress scm = new SymComManagerCompress();
             scm.setCommunicationEventListener(
                     response -> {
                         // Code de traitement de la réponse – dans le UI-Thread
                         if(response != null){
                             reponse.setText(response);
+                            long end =  System.currentTimeMillis();
+                            System.out.println("Temps : " + (end - start));
                             return true;
                         }
                         return false;
@@ -79,8 +82,6 @@ public class CompressCommunicationActivity extends Activity {
                 obj = new URL(strings[1]);
                 HttpURLConnection connection = (HttpURLConnection) obj.openConnection();
                 connection.setRequestMethod("POST");
-                System.out.println("0 " +strings[0]);
-                System.out.println("1 " +strings[1]);
                 connection.setRequestProperty("X-Network", "CSD");
                 connection.setRequestProperty("X-Content-Encoding", "deflate");
                 connection.setRequestProperty("Content-Type", "text/plain");

@@ -82,6 +82,7 @@ public class ObjectCommunicationActivity extends Activity {
         this.back = findViewById(R.id.retour);
 
         sendBtn.setOnClickListener((v) -> {
+            long start =  System.currentTimeMillis();
             SymComManager scm = new SymComManager();
             scm.setCommunicationEventListener(
                     response -> {
@@ -89,6 +90,8 @@ public class ObjectCommunicationActivity extends Activity {
                             this.name.setText("");
                             this.phone.setText("");
                             this.response.setText(response);
+                            long end =  System.currentTimeMillis();
+                            System.out.println("Temps " + (end - start));
                             return true;
                         }
                         return false;
