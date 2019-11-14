@@ -1,9 +1,9 @@
 4.1
-Si le Serveur ne répond pas, le SymComManager resterait bloqué lorsqu'il essaie de recevoir la réponse. Cela pourrait être un problème si celle-ci n'arrive 
+Si le serveur ne répond pas, le SymComManager resterait bloqué lorsqu'il essaie de recevoir la réponse. Cela pourrait être un problème si celle-ci n'arrive 
 jamais (perte de message). Pour régler ce problème, il faudrait plutôt ouvrir un nouveau thread pour le SymComManager et rajouter un nouveau thread timeout,
-qui attend x seconde, regarde si le SymComManager est arrété et si ce n'est pas le cas, l'arrête et affiche une erreur "serveur indisponible"
+qui attend x seconde, regarde si le SymComManager est arrêté et si ce n'est pas le cas, l'arrête et affiche une erreur "serveur indisponible"
 Dans le cas où nous recevons un message d'erreur, ce dernier ne ferait qu'afficher ce qu'il reçoit. (Il n'y a aucun contrôle sur le code de réponse). Nous
-pouvons simplement vérifier le code réponse du serveu via un connection.getResponseCode() puis envoyer un message différent selon si elle désigne une erreur
+pouvons simplement vérifier le code réponse du serveur via un connection.getResponseCode() puis envoyer un message différent selon si elle désigne une erreur
 ou si la réponse du serveur est correcte.
 
 =======
@@ -19,9 +19,9 @@ l'application côté serveur permette ce genre d'authentification. Pour les requ
 l'utilisateur n'ait pas à rentrer ses credentials quand le serveur devient disponible.
 
 4.3
-un probleme de concurrence. Il faut faire en sorte que les processus soient synchronisés de sortes à ce que nous ne perdions pas de données ni lors de 
+Un problème de concurrence. Il faut faire en sorte que les processus soient synchronisés de sortes à ce que nous ne perdions pas de données ni lors de 
 l'envoi (qu'une ancienne préparation se fasse écraser par une nouvelle avant qu'elle ne soit envoyée), ni lors de la réception (qu'une donnée reçue se 
-fasse écraser par une nouvelle avant qu'elle ne soit traitée)
+fasse écraser par une nouvelle avant qu'elle ne soit traitée).
 
 4.4
 Effectuer une connexion par transmission différée 
@@ -32,16 +32,23 @@ serveur lorsque ces dernières s'avèrent nécessaires ?
 Une seule connexion 
 
 4.5.a
-REST/JSON est moins secure v donc serai vulnerable a des attaques si le code derrière n'est pas secure
+REST/JSON est moins secure donc serait vulnérable à des attaques, si le code derrière n'est pas secure. Par contre, sa syntaxe est plus simple
+et fournit de meilleur support pour les navigateurs comme chrome ou firefox.
 
 4.5.b
-les protocol buffers sont compatibles avec HTTP. le protocol buffer pourrait serialiser un objet en une requete http pour l'envoyer.
+Les protocol buffers sont compatibles avec HTTP. le protocol buffer pourrait sérialiser un objet en une requête http pour l'envoyer.
+
+4.5.c
+Il faudrait être capable de retirer une plus petite portion de données à la fois. Récupérer trop de données impliquerait beaucoup de travail
+de la part du mobile pour faire la pagination. Il vaudrait mieux fixer une limite et un offset pour les limiter. Si les utilisateurs veulent en avoir plus
+on peut ainsi refaire des requêtes au serveur pendant que l'utilisateur scrolle. 
 
 4.6
-	   "Test" "Lorem Ipsum (premier paragraphe)" "Lorem Ipsum (entier)"
-Async    : 129	  230				     Crash
-Compress : 309	  287				     348
-On constate qu'après une certaine taille l'asynctask plante alors que le format compressé ne plante pas. On constate aussi que pour du texte simple,
-les performances sont meilleures sans compression. Toutefois, plus le texte est long plus le temps d'attente entre l'envois de la requête et le temps
-de réception de la réponse sera long (sans parler des problèmes d'erreurs si le texte est trop long). Dans la version compressée, on constate que le temps 
-d'envoi et de réception est stable quelque soit la longueur du texte.
+	   "Test" "Lorem Ipsum (premier paragraphe)" "Lorem Ipsum (entier)" "{"name":"John Doe","phone":"+4766666666"}"
+Normal:    129	  230				     Crash		    360
+Compress : 309	  287				     348		    256
+On constate qu'après une certaine taille la version sans compression plante alors que le format compressé ne plante pas. On constate aussi que pour du texte 
+simple, les performances sont meilleures sans compression. Toutefois, plus le texte est long plus le temps d'attente entre l'envoi de la requête et le 
+temps de réception de la réponse sera long (sans parler des problèmes d'erreurs si le texte est trop long). Dans la version compressée, on constate que le 
+temps d'envoi et de réception est stable quelque soit la longueur du texte. Il n'y a pas non plus de différences significatives entre le fait que le message 
+envoyé soit du texte simple ou des objets sérialisés lors d'envois compressés.
