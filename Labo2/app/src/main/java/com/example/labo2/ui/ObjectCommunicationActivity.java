@@ -3,6 +3,7 @@ package com.example.labo2.ui;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -16,11 +17,11 @@ import com.google.gson.Gson;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 
 /*
@@ -65,8 +66,6 @@ public class ObjectCommunicationActivity extends Activity {
     private Button sendBtn = null;
     private Button back = null;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,6 +87,8 @@ public class ObjectCommunicationActivity extends Activity {
             scm.setCommunicationEventListener(
                     response -> {
                         if(response != null){
+                            this.name.setText("");
+                            this.phone.setText("");
                             this.response.setText(response);
                             return true;
                         }
@@ -114,8 +115,6 @@ public class ObjectCommunicationActivity extends Activity {
                 System.out.println("Exception : " + e);
                 e.printStackTrace();
             }
-            this.name.setText("");
-            this.phone.setText("");
         });
 
         back.setOnClickListener((v) -> finish());
@@ -127,56 +126,38 @@ public class ObjectCommunicationActivity extends Activity {
 
         @Override
         protected String doInBackground(String ... strings) {
-            String response = null;
-            String data = strings[0];
-            HttpURLConnection connection = null;
-            BufferedReader reader = null;
+            URL obj;
             try {
-                URL url = new URL(strings[1]);
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setDoOutput(true);
-                // is output buffer writter
+                System.out.println(strings[0]);
+                obj = new URL(strings[1]);
+                HttpURLConnection connection = (HttpURLConnection) obj.openConnection();
                 connection.setRequestMethod("POST");
+                connection.setRequestProperty("Request", strings[0]);
                 connection.setRequestProperty("Content-Type", strings[2]);
                 connection.setRequestProperty("Accept", strings[2]);
-                //set headers and method
-                Writer writer = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream(), "UTF-8"));
-                writer.write(data);
-                // data
-                writer.close();
-                InputStream inputStream = connection.getInputStream();
-                //input stream
-                StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
-                    // Nothing to do.
-                    return null;
-                }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-
+                connection.setDoOutput(true);
+                BufferedWriter os = new BufferedWriter(new OutputStreamWriter(
+                        connection.getOutputStream(), "UTF-8"));
+                os.append(strings[0]);
+                os.close();
+                BufferedReader in = new BufferedReader(new InputStreamReader(
+                        connection.getInputStream()));
                 String inputLine;
-                while ((inputLine = reader.readLine()) != null)
-                    buffer.append(inputLine + "\n");
-                if (buffer.length() == 0) {
-                    // Stream was empty. No point in parsing.
-                    return null;
+                StringBuilder response = new StringBuilder();
+
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
                 }
-                response = buffer.toString();
-                return response;
+                in.close();
+                return response.toString();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (ProtocolException e) {
+                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            finally {
-                if (connection != null) {
-                    connection.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
+
             return null;
         }
 
