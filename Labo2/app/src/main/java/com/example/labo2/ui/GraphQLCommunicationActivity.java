@@ -72,6 +72,20 @@ public class GraphQLCommunicationActivity extends Activity {
         }
     }
 
+    class Book{
+        private String title;
+        private String description;
+
+        public Book(String title, String description){
+            this.title = title;
+            this.description = description;
+        }
+
+        public String toString(){
+            return title + " : " + description + "\n\n";
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
