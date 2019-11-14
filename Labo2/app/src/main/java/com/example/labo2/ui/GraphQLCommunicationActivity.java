@@ -37,7 +37,7 @@ public class GraphQLCommunicationActivity extends Activity {
     private TextView textView;
     private LinkedList<Author> data;
 
-    public void parseResp(String response) {
+    public void parseAuthor(String response) {
         JsonObject convertedObject = new Gson().fromJson(response, JsonObject.class);
         JsonArray authors = convertedObject.get("data").getAsJsonObject().get("allAuthors").getAsJsonArray();
         int id;
@@ -50,6 +50,21 @@ public class GraphQLCommunicationActivity extends Activity {
             lastName = authr.get("last_name").getAsString();
             data.add(new Author(id, firstName, lastName));
         }
+    }
+
+    public LinkedList<Book> parseBook(String response){
+        LinkedList<Book> books = new LinkedList<>();
+        JsonObject convertedObject = new Gson().fromJson(response, JsonObject.class);
+        JsonArray jsonbooks = convertedObject.get("data").getAsJsonObject().get("allPostByAuthor").getAsJsonArray();
+        String title;
+        String description;
+        for (JsonElement book : jsonbooks) {
+            JsonObject oneBook = book.getAsJsonObject();
+            title = oneBook.get("title").getAsString();
+            description = oneBook.get("description").getAsString();
+            books.add(new Book(title, description));
+        }
+        return books;
     }
 
     class Author{
@@ -100,7 +115,7 @@ public class GraphQLCommunicationActivity extends Activity {
                 response -> {
                     // Code de traitement de la réponse – dans le UI-Thread
                     if(response != null){
-                        parseResp(response);
+                        parseAuthor(response);
                         System.out.println(response + " <------------------------");
                         List<String> arrayList = new ArrayList<>();
                         for (Author a : data) {
@@ -129,7 +144,12 @@ public class GraphQLCommunicationActivity extends Activity {
                         response -> {
                             // Code de traitement de la réponse – dans le UI-Thread
                             if(response != null){
-                                System.out.println("I am here" + response);
+                                LinkedList<Book> books = parseBook(response);
+                                String text = "";
+                                for(Book book : books){
+                                    text += book;
+                                }
+                                textView.setText(text);
                                 return true;
                             }
                             return false;
