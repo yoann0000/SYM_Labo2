@@ -54,16 +54,16 @@ public class ObjectCommunicationActivity extends Activity {
         }
     }
 
-    private TextView sendLbl = null;
-    private TextView responseLbl = null;
-    private EditText name = null;
-    private EditText phone = null;
-    private RadioButton jsonBtn = null;
-    private RadioButton xmlBtn = null;
-    private RadioGroup radioGroup = null;
-    private EditText response = null;
-    private Button sendBtn = null;
-    private Button back = null;
+    private TextView sendLbl;
+    private TextView responseLbl;
+    private EditText name;
+    private EditText phone;
+    private RadioButton jsonBtn;
+    private RadioButton xmlBtn;
+    private RadioGroup radioGroup;
+    private EditText response;
+    private Button sendBtn;
+    private Button back;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,9 +94,7 @@ public class ObjectCommunicationActivity extends Activity {
                             switch(radioGroup.getCheckedRadioButtonId()) {
                                 case R.id.jsonBtn:
                                     Type type = new TypeToken<Person>(){}.getType();
-                                    int stop = response.indexOf("PHP");
-                                    String pers = response.substring(0, stop);
-                                    person = new Gson().fromJson(pers, type);
+                                    person = new Gson().fromJson(response, type);
                                     this.response.setText(person.toString());
                                     break;
 
@@ -116,7 +114,7 @@ public class ObjectCommunicationActivity extends Activity {
                 switch(radioGroup.getCheckedRadioButtonId()) {
                     case R.id.jsonBtn:
                         Person person = new Person(this.name.getText().toString(), this.phone.getText().toString());
-                        scm.sendRequest(new Gson().toJson(person), "http://sym.iict.ch/rest/txt", "application/json");
+                        scm.sendRequest(new Gson().toJson(person), "http://sym.iict.ch/rest/json", "application/json");
                         break;
 
                     case R.id.xmlBtn:
@@ -216,7 +214,6 @@ public class ObjectCommunicationActivity extends Activity {
                 connection.setRequestMethod("POST");
                 connection.setRequestProperty("Request", strings[0]);
                 connection.setRequestProperty("Content-Type", strings[2]);
-                connection.setRequestProperty("Accept", strings[2]);
                 connection.setDoOutput(true);
                 BufferedWriter os = new BufferedWriter(new OutputStreamWriter(
                         connection.getOutputStream(), "UTF-8"));
