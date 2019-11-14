@@ -1,5 +1,5 @@
-4.1
-
+﻿4.1
+On pourrai faire que le communication manager ne return pas null si la comunication echoue mais retourne une string d'erreur comme ça l'on pourrai créer des clauses dans le code pour gérer les differentes strings d'erreurs.
 4.2
 On peut utiliser un protocole asyncrone sous condition que l'authentification se fasse en synchrone.
 Par exemple, on s'authentifie ce qui nous donnerai un token d'access puis toute les autres requetes ce feraient à l'aide de ce token.
