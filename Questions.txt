@@ -13,7 +13,7 @@ On pourrai faire que le communication manager ne return pas null si la comunicat
 On peut utiliser un protocole asyncrone sous condition que l'authentification se fasse en synchrone.
 Par exemple, on s'authentifie ce qui nous donnerai un token d'access puis toute les autres requetes ce feraient à l'aide de ce token.
 Idem pour différé pour autant que le token ne s'expire pas.
-
+=======
 Oui, c'est possible. Il suffit de rajouter un header Authorization contenant notre crédential (en admettant que nous en ayons une), il faut aussi que
 l'application côté serveur permette ce genre d'authentification. Pour les requêtes différées, cela est aussi possible, mais il faut faire en sorte que
 l'utilisateur n'ait pas à rentrer ses credentials quand le serveur devient disponible.
@@ -24,15 +24,16 @@ l'envoi (qu'une ancienne préparation se fasse écraser par une nouvelle avant q
 fasse écraser par une nouvelle avant qu'elle ne soit traitée).
 
 4.4
-Effectuer une connexion par transmission différée 
- 
-Multiplexer toutes les connexions vers un même serveur en une seule connexion de transport. Dans ce dernier cas, comment implémenter
- le protocole applicatif, quels avantages peut-on espérer de ce multiplexage, et surtout, comment doit-on planifier les réponses du 
-serveur lorsque ces dernières s'avèrent nécessaires ? 
-Une seule connexion 
+Effectuer une connexion par transmission différée
+
+En effectuant la connexion en différée et pas les messages on limite le nombre de threads en attente active (si l'on assume que le thread de connexion se charge de reveiller les threads de message) et fait en sorte qu'il n'y a que besoin d'une boucle qui ping la connexion à la fois.
+
+Multiplexer les connexions
+
+En multiplexant les connexion on reduit le nombre de connexions ouvertes à une. Par contre il faut implémenter le multiplexeur capable de rediriger les messages la ou ils doivent l'être.
 
 4.5.a
-REST/JSON est moins secure donc serait vulnérable à des attaques, si le code derrière n'est pas secure. Par contre, sa syntaxe est plus simple
+REST/JSON est moins secure et donc serait vulnérable à des attaques, si le code derrière n'est pas secure. Par contre, sa syntaxe est plus simple
 et fournit de meilleur support pour les navigateurs comme chrome ou firefox.
 
 4.5.b
