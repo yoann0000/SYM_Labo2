@@ -65,16 +65,16 @@ public class ObjectCommunicationActivity extends Activity {
         }
     }
 
-    private TextView sendLbl = null;
-    private TextView responseLbl = null;
-    private EditText name = null;
-    private EditText phone = null;
-    private RadioButton jsonBtn = null;
-    private RadioButton xmlBtn = null;
-    private RadioGroup radioGroup = null;
-    private EditText response = null;
-    private Button sendBtn = null;
-    private Button back = null;
+    private TextView sendLbl;
+    private TextView responseLbl;
+    private EditText name;
+    private EditText phone;
+    private RadioButton jsonBtn;
+    private RadioButton xmlBtn;
+    private RadioGroup radioGroup;
+    private EditText response;
+    private Button sendBtn;
+    private Button back;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -270,8 +270,8 @@ public class ObjectCommunicationActivity extends Activity {
                 connection.setRequestProperty("Request", strings[0]);
                 connection.setRequestProperty("Content-Type", strings[2]);
                 connection.setRequestProperty("Accept", strings[2]);
-
                 connection.setDoOutput(true);
+
                 BufferedWriter os = new BufferedWriter(new OutputStreamWriter(
                         connection.getOutputStream(), "UTF-8"));
                 os.append(strings[0]);
