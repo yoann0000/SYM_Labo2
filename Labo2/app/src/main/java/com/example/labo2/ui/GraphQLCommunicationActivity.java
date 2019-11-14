@@ -11,6 +11,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.labo2.R;
+import com.example.labo2.model.Author;
 import com.example.labo2.ui.eventListener.CommunicationEventListener;
 
 import java.io.BufferedReader;
@@ -29,7 +30,6 @@ public class GraphQLCommunicationActivity extends Activity {
 
     private Spinner spinner;
     private Button button;
-    private Button returne;
     private TextView textView;
 
     public String parseResp(String response) {
@@ -42,7 +42,6 @@ public class GraphQLCommunicationActivity extends Activity {
         setContentView(R.layout.activity_graphql);
         this.spinner = findViewById(R.id.spinner);
         this.button = findViewById(R.id.button);
-        this.returne = findViewById(R.id.button2);
         this.textView = findViewById(R.id.textView2);
 
         SymComManager scm = new SymComManager();
@@ -106,7 +105,7 @@ public class GraphQLCommunicationActivity extends Activity {
             }
         });*/
 
-        returne.setOnClickListener((v) -> finish());
+        button.setOnClickListener((v) -> finish());
     }
 
     public class SymComManager extends AsyncTask<String, Void, String> {
