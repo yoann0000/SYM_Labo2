@@ -97,7 +97,7 @@ public class GraphQLCommunicationActivity extends Activity {
         }
 
         public String toString(){
-            return title + " : " + description + "\n\n";
+            return "Titel : "  + title + "\nDescription : " + description + "\n\n\n";
         }
     }
 
@@ -171,27 +171,6 @@ public class GraphQLCommunicationActivity extends Activity {
             }
 
         });
-        /*button.setOnClickListener(v -> { //{"query":"{allPostByAuthor(authorId: 1){title description}}"}
-
-            SymComManager symComManager = new SymComManager();
-            symComManager.setCommunicationEventListener(
-                    response -> {
-                        // Code de traitement de la réponse – dans le UI-Thread
-                        if(response != null){
-                            textView.setText(parseResp(response));
-                            return true;
-                        }
-                        return false;
-                    });
-            String author = String.valueOf(spinner.getSelectedItem());
-            String query = "allPostByAuthor(authorId: " + author + "){title description}";
-            try {
-                symComManager.sendRequest(query, "http://sym.iict.ch/rest/txt");
-            } catch (Exception e) {
-                System.out.println("Exception : " + e);
-                e.printStackTrace();
-            }
-        });*/
 
         button.setOnClickListener((v) -> finish());
     }
