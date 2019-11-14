@@ -208,8 +208,7 @@ public class ObjectCommunicationActivity extends Activity {
         protected String doInBackground(String ... strings) {
             URL obj;
             try {
-                System.out.println(strings[0] + " " + strings[1] + " " + strings[2]);
-
+                System.out.println(strings[0] + "\n" + strings[1] + "\n" + strings[2]);
                 obj = new URL(strings[1]);
                 HttpURLConnection connection = (HttpURLConnection) obj.openConnection();
                 connection.setRequestMethod("POST");
