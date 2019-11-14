@@ -101,7 +101,7 @@ public class ObjectCommunicationActivity extends Activity {
                     case R.id.jsonBtn:
                         Person person = new Person(this.name.getText().toString(), this.phone.getText().toString());
                         Gson gson = new Gson();
-                        scm.sendRequest(gson.toJson(person), "http://sym.iict.ch/rest/txt", "application/json");
+                        scm.sendRequest(gson.toJson(person), "http://sym.iict.ch/rest/json", "application/json");
                         break;
 
                     case R.id.xmlBtn:
