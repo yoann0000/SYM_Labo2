@@ -98,7 +98,7 @@ public class GraphQLCommunicationActivity extends Activity {
         }
 
         public String toString(){
-            return "Titel : "  + title + "\nDescription : " + description + "\n\n\n";
+            return "Title : "  + title + "\nDescription : " + description + "\n\n\n";
         }
     }
 
@@ -139,7 +139,7 @@ public class GraphQLCommunicationActivity extends Activity {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 SymComManager symComManager = new SymComManager();
-                symComManager.sendRequest("{\"query\":\"{allPostByAuthor(authorId: " + position + "){title description}}\"}", "http://sym.iict.ch/api/graphql");
+                symComManager.sendRequest("{\"query\":\"{allPostByAuthor(authorId: " + (position+1) + "){title description}}\"}", "http://sym.iict.ch/api/graphql");
                 symComManager.setCommunicationEventListener(response -> {
                     if (response != null) {
                         books = parseBooks(response);
