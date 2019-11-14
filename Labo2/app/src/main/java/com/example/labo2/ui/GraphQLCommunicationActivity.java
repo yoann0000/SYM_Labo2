@@ -35,21 +35,37 @@ public class GraphQLCommunicationActivity extends Activity {
     private Spinner spinner;
     private Button button;
     private TextView textView;
-    private LinkedList<Author> data;
+    private List<Author> data;
+    private List<Book> books;
 
-    public void parseResp(String response) {
+    public void parseAuthors(String response) {
         JsonObject convertedObject = new Gson().fromJson(response, JsonObject.class);
         JsonArray authors = convertedObject.get("data").getAsJsonObject().get("allAuthors").getAsJsonArray();
         int id;
         String firstName;
         String lastName;
-        for (JsonElement author : authors) {
-            JsonObject authr = author.getAsJsonObject();
-            id = authr.get("id").getAsInt();
-            firstName = authr.get("first_name").getAsString();
-            lastName = authr.get("last_name").getAsString();
+        for (JsonElement elem : authors) {
+            JsonObject author = elem.getAsJsonObject();
+            id = author.get("id").getAsInt();
+            firstName = author.get("first_name").getAsString();
+            lastName = author.get("last_name").getAsString();
             data.add(new Author(id, firstName, lastName));
         }
+    }
+
+    public ArrayList<Book> parseBooks(String response) {
+        JsonObject convertedObject = new Gson().fromJson(response, JsonObject.class);
+        JsonArray books = convertedObject.get("data").getAsJsonObject().get("allPostByAuthor").getAsJsonArray();
+        String title;
+        String descr;
+        ArrayList<Book> bookList = new ArrayList<>();
+        for (JsonElement elem : books) {
+            JsonObject book = elem.getAsJsonObject();
+            title = book.get("title").getAsString();
+            descr = book.get("description").getAsString();
+            bookList.add(new Book(title, descr));
+        }
+        return bookList;
     }
 
     class Author{
@@ -100,8 +116,7 @@ public class GraphQLCommunicationActivity extends Activity {
                 response -> {
                     // Code de traitement de la réponse – dans le UI-Thread
                     if(response != null){
-                        parseResp(response);
-                        System.out.println(response + " <------------------------");
+                        parseAuthors(response);
                         List<String> arrayList = new ArrayList<>();
                         for (Author a : data) {
                             arrayList.add(a.toString());
@@ -123,7 +138,20 @@ public class GraphQLCommunicationActivity extends Activity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                // your code here
+                SymComManager symComManager = new SymComManager();
+                symComManager.sendRequest("{\"query\":\"{allPostByAuthor(authorId: " + position + "){title description}}\"}", "http://sym.iict.ch/api/graphql");
+                symComManager.setCommunicationEventListener(response -> {
+                    if (response != null) {
+                        books = parseBooks(response);
+                        StringBuilder text = new StringBuilder();
+                        for (Book book : books) {
+                            text.append(book.toString());
+                        }
+                        textView.setText(text.toString());
+                        return true;
+                    }
+                    return false;
+                });
             }
 
             @Override
